@@ -1,4 +1,4 @@
-package net.hightwink.musicbot.classes;
+package net.hightwink.musicbot.classes.audio;
 
 import net.dv8tion.jda.api.entities.Guild;
 

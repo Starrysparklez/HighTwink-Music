@@ -1,4 +1,4 @@
-package net.hightwink.musicbot.classes;
+package net.hightwink.musicbot.classes.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
