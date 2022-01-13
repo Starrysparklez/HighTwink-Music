@@ -7,6 +7,12 @@ import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.hightwink.musicbot.classes.*;
+import net.hightwink.musicbot.classes.audio.AudioManager;
+import net.hightwink.musicbot.classes.audio.AudioPlayerSendHandler;
+import net.hightwink.musicbot.classes.audio.MusicPlayerManager;
+import net.hightwink.musicbot.classes.audio.PlayerManager;
+
+import java.util.Objects;
 
 public class Play extends SlashCommandExecutor {
     public Play() {
@@ -25,7 +31,7 @@ public class Play extends SlashCommandExecutor {
         }
 
         Guild server = ctx.getGuild();
-        String query = ctx.getEvent().getOption("query").getAsString();
+        String query = Objects.requireNonNull(ctx.getEvent().getOption("query")).getAsString();
 
         MusicPlayerManager manager = AudioManager.get(ctx.getGuild());
         ctx.getGuild().getAudioManager().setSendingHandler(new AudioPlayerSendHandler(manager.getPlayer()));
