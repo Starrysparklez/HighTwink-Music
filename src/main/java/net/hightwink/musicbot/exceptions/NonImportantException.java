@@ -1,5 +1,5 @@
-package net.hightwink.musicbot.classes;
+package net.hightwink.musicbot.exceptions;
 
-public class NonImportantException extends Throwable{
+public class NonImportantException extends Throwable {
     // yes
 }
