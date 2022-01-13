@@ -13,9 +13,12 @@ import net.dv8tion.jda.api.utils.Compression;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.hightwink.musicbot.classes.Context;
-import net.hightwink.musicbot.classes.NonImportantException;
+import net.hightwink.musicbot.commands.Pause;
+import net.hightwink.musicbot.commands.Restart;
+import net.hightwink.musicbot.exceptions.NonImportantException;
 import net.hightwink.musicbot.classes.SlashCommandExecutor;
 import net.hightwink.musicbot.commands.Play;
+import net.hightwink.musicbot.commands.Stop;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 
@@ -40,7 +43,7 @@ public class Main extends ListenerAdapter {
 
     public void run() throws IOException {
         executors = new SlashCommandExecutor[]{
-                new Play()
+                new Play(), new Stop(), new Pause(), new Restart()
         };
 
         Yaml configParser = new Yaml();
