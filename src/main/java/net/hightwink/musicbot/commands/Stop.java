@@ -30,5 +30,6 @@ public class Stop extends SlashCommandExecutor {
         manager.getScheduler().getQueue().clear();
         manager.getPlayer().destroy();
         ctx.getGuild().getAudioManager().closeAudioConnection();
+        ctx.replyText(":ok_hand: остановлено").queue();
     }
 }
