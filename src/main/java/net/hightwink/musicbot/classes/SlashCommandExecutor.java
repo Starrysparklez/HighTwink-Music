@@ -11,6 +11,7 @@ public abstract class SlashCommandExecutor {
     public String description;
     public CommandData commandData;
     public List<Permission> requiredPermissions;
+    public boolean applyToStuffServer;
 
     public void execute(Context ctx) throws NonImportantException {}
 }

@@ -9,6 +9,7 @@ public class Restart extends SlashCommandExecutor {
         this.commandName = "exit";
         this.description = "Завершить работу данного инстанса бота.";
         this.commandData = new CommandData(this.commandName, this.description);
+        this.applyToStuffServer = true;
     }
 
     @Override
