@@ -3,22 +3,22 @@ package net.hightwink.musicbot;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.Compression;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.hightwink.musicbot.classes.Context;
-import net.hightwink.musicbot.commands.Pause;
-import net.hightwink.musicbot.commands.Restart;
+import net.hightwink.musicbot.classes.utils.ArrayUtil;
+import net.hightwink.musicbot.commands.*;
 import net.hightwink.musicbot.exceptions.NonImportantException;
 import net.hightwink.musicbot.classes.SlashCommandExecutor;
-import net.hightwink.musicbot.commands.Play;
-import net.hightwink.musicbot.commands.Stop;
 import org.jetbrains.annotations.NotNull;
 import org.yaml.snakeyaml.Yaml;
 
@@ -26,15 +26,16 @@ import javax.security.auth.login.LoginException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.*;
 
 public class Main extends ListenerAdapter {
     SlashCommandExecutor[] executors;
     HashMap<String, Object> config = new HashMap<>();
+    static List<String> commandLineArgs;
 
     public static void main(String[] args) {
         try {
+            commandLineArgs = Arrays.asList(args);
             new Main().run();
         } catch(IOException err) {
             err.printStackTrace();
@@ -43,7 +44,7 @@ public class Main extends ListenerAdapter {
 
     public void run() throws IOException {
         executors = new SlashCommandExecutor[]{
-                new Play(), new Stop(), new Pause(), new Restart()
+                new Play(), new Stop(), new Pause(), new Restart(), new Shuffle()
         };
 
         Yaml configParser = new Yaml();
@@ -80,11 +81,40 @@ public class Main extends ListenerAdapter {
     public void onReady(@NotNull ReadyEvent e) {
         System.out.println("Бот " + e.getJDA().getSelfUser().getName() + " готов к работе.");
 
-        for (SlashCommandExecutor cmd : executors)
-            e.getJDA().getGuilds().forEach(g -> {
-                e.getJDA().upsertCommand(cmd.commandData).queue();
-                g.upsertCommand(cmd.commandData).queue();
+        for (String commandLineArg : commandLineArgs) {
+            System.out.println(commandLineArg);
+        }
+
+        if (commandLineArgs.get(0).equals("--unregister")) {
+            Guild stuffGuild = e.getJDA().getGuildById((String) config.get("bot.stuffServerId"));
+            assert stuffGuild != null;
+
+            stuffGuild.retrieveCommands().complete().forEach(cmd -> {
+                cmd.delete().queue();
+                System.out.println("Unregistering stuff command '" + cmd.getName() + "'...");
             });
+            e.getJDA().retrieveCommands().complete().forEach(cmd -> {
+                cmd.delete().queue();
+                System.out.println("Unregistering global command '" + cmd.getName() + "'...");
+            });
+        }
+        if (commandLineArgs.get(0).equals("--register")) {
+            Guild stuffGuild = e.getJDA().getGuildById((String) config.get("bot.stuffServerId"));
+            assert stuffGuild != null;
+
+            // регистрация команд
+            for (SlashCommandExecutor cmd : executors) {
+                if (cmd.applyToStuffServer) {
+                    // создать команду только на stuff сервере
+                    stuffGuild.upsertCommand(cmd.commandData).queue();
+                    System.out.println("Registering stuff command '" + cmd.commandName + "'...");
+                } else {
+                    // зарегать команду везде
+                    e.getJDA().upsertCommand(cmd.commandData).queue();
+                    System.out.println("Registering global command '" + cmd.commandName + "'...");
+                }
+            }
+        }
     }
 
     @Override
