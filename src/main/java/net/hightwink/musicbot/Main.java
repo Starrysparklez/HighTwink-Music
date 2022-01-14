@@ -8,14 +8,12 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.Compression;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.hightwink.musicbot.classes.Context;
-import net.hightwink.musicbot.classes.utils.ArrayUtil;
 import net.hightwink.musicbot.commands.*;
 import net.hightwink.musicbot.exceptions.NonImportantException;
 import net.hightwink.musicbot.classes.SlashCommandExecutor;
@@ -81,11 +79,7 @@ public class Main extends ListenerAdapter {
     public void onReady(@NotNull ReadyEvent e) {
         System.out.println("Бот " + e.getJDA().getSelfUser().getName() + " готов к работе.");
 
-        for (String commandLineArg : commandLineArgs) {
-            System.out.println(commandLineArg);
-        }
-
-        if (commandLineArgs.get(0).equals("--unregister")) {
+        if (commandLineArgs.size() > 0 && commandLineArgs.get(0).equals("--unregister")) {
             Guild stuffGuild = e.getJDA().getGuildById((String) config.get("bot.stuffServerId"));
             assert stuffGuild != null;
 
@@ -98,7 +92,7 @@ public class Main extends ListenerAdapter {
                 System.out.println("Unregistering global command '" + cmd.getName() + "'...");
             });
         }
-        if (commandLineArgs.get(0).equals("--register")) {
+        if (commandLineArgs.size() > 0 && commandLineArgs.get(0).equals("--register")) {
             Guild stuffGuild = e.getJDA().getGuildById((String) config.get("bot.stuffServerId"));
             assert stuffGuild != null;
 
