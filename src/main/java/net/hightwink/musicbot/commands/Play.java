@@ -12,6 +12,7 @@ import net.hightwink.musicbot.classes.audio.AudioPlayerSendHandler;
 import net.hightwink.musicbot.classes.audio.MusicPlayerManager;
 import net.hightwink.musicbot.classes.audio.PlayerManager;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Play extends SlashCommandExecutor {
@@ -27,6 +28,13 @@ public class Play extends SlashCommandExecutor {
         GuildVoiceState userState = ctx.getAuthor().getVoiceState();
         if (userState == null || userState.getChannel() == null) {
             ctx.replyText("Вы должны находиться в голосовом канале!").queue();
+            return;
+        }
+
+        List<String> allowedVoiceChannelIds = (List<String>) ctx.getConfig().get("bot.allowedVoices");
+        if (allowedVoiceChannelIds.size() > 0
+                && !allowedVoiceChannelIds.contains(userState.getChannel().getId())) {
+            ctx.replyText("Проигрывание музыки запрещено в этом канале.").queue();
             return;
         }
 
