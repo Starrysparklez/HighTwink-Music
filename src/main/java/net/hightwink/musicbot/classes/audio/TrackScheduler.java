@@ -9,7 +9,6 @@ import net.dv8tion.jda.api.entities.Guild;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.LinkedBlockingQueue;
 
 public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
@@ -33,7 +32,8 @@ public class TrackScheduler extends AudioEventAdapter {
     }
     public AudioTrack nextTrack() {
         //AudioTrack track = queue.poll();
-        AudioTrack track = queue.get(queue.size() - 1);
+        AudioTrack track = queue.get(0);
+        queue.remove(0);
         player.startTrack(track, false);
         return track;
     }
