@@ -44,9 +44,9 @@ public class Main extends ListenerAdapter {
     public void run() throws IOException {
         executors = new SlashCommandExecutor[]{
                 new Play(),    new Stop(),
-                new Pause(),   new Restart(),
+                new Pause(),   new Exit(),
                 new Shuffle(), new Queue(),
-                new Skip()
+                new Skip(),    new Unpause()
         };
 
         Yaml configParser = new Yaml();
