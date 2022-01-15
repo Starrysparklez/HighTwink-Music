@@ -31,13 +31,13 @@ public class VoteManager {
     public void call(String voteFor, Consumer<NullType> callbackAccept, Consumer<NullType> callbackDecline) {
         GuildVoiceState voiceState = ctx.getGuild().getSelfMember().getVoiceState();
         if (voiceState == null || voiceState.getChannel() == null) {
-            ctx.replyText("Ну, в войсе никого нет, так что вот так вот ...").queue();
+            ctx.replyText("Ну, в войсе никого нет, так что вот так вот ...");
             return;
         }
         GuildVoiceState userVoiceState = ctx.getAuthor().getVoiceState();
         if (userVoiceState == null || userVoiceState.getChannel() == null) {
             // || voiceState.getChannel().getMembers().contains(ctx.getAuthor())
-            ctx.replyText("Вы не находитесь в общем со мной голосовом канале.").queue();
+            ctx.replyText("Вы не находитесь в общем со мной голосовом канале.");
             return;
         }
 
