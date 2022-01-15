@@ -15,6 +15,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.hightwink.musicbot.classes.Context;
 import net.hightwink.musicbot.commands.*;
+import net.hightwink.musicbot.commands.Queue;
 import net.hightwink.musicbot.exceptions.NonImportantException;
 import net.hightwink.musicbot.classes.SlashCommandExecutor;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +43,7 @@ public class Main extends ListenerAdapter {
 
     public void run() throws IOException {
         executors = new SlashCommandExecutor[]{
-                new Play(), new Stop(), new Pause(), new Restart(), new Shuffle()
+                new Play(), new Stop(), new Pause(), new Restart(), new Shuffle(), new Queue()
         };
 
         Yaml configParser = new Yaml();
@@ -78,6 +79,22 @@ public class Main extends ListenerAdapter {
     @Override
     public void onReady(@NotNull ReadyEvent e) {
         System.out.println("Бот " + e.getJDA().getSelfUser().getName() + " готов к работе.");
+
+        if ((boolean) config.get("bot.developmentEnvironment")) {
+            if (commandLineArgs.size() > 0 && commandLineArgs.get(0).equals("--unregister")) {
+                Guild stuffGuild = e.getJDA().getGuildById((String) config.get("bot.stuffServerId"));
+                assert stuffGuild != null;
+                stuffGuild.retrieveCommands().complete().forEach(cmd -> cmd.delete().queue());
+            }
+            if (commandLineArgs.size() > 0 && commandLineArgs.get(0).equals("--register")) {
+                e.getJDA().getGuilds().forEach(g -> {
+                    for (SlashCommandExecutor command : executors) {
+                        g.upsertCommand(command.commandData).queue();
+                    }
+                });
+            }
+            return;
+        }
 
         if (commandLineArgs.size() > 0 && commandLineArgs.get(0).equals("--unregister")) {
             Guild stuffGuild = e.getJDA().getGuildById((String) config.get("bot.stuffServerId"));
