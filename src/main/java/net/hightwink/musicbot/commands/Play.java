@@ -27,14 +27,14 @@ public class Play extends SlashCommandExecutor {
     public void execute(Context ctx) {
         GuildVoiceState userState = ctx.getAuthor().getVoiceState();
         if (userState == null || userState.getChannel() == null) {
-            ctx.replyText("Вы должны находиться в голосовом канале!").queue();
+            ctx.replyText("Вы должны находиться в голосовом канале!");
             return;
         }
 
         List<String> allowedVoiceChannelIds = (List<String>) ctx.getConfig().get("bot.allowedVoices");
         if (allowedVoiceChannelIds.size() > 0
                 && !allowedVoiceChannelIds.contains(userState.getChannel().getId())) {
-            ctx.replyText("Проигрывание музыки запрещено в этом канале.").queue();
+            ctx.replyText("Проигрывание музыки запрещено в этом канале.");
             return;
         }
 
@@ -50,31 +50,31 @@ public class Play extends SlashCommandExecutor {
             query.startsWith("https://") ? query : "ytsearch: " + query,
             new FunctionalResultHandler(audioTrack -> {
                 ctx.replyText("Трек **" + audioTrack.getInfo().title + "** добавлен в очередь.")
-                        .queue();
+                        ;
                 manager.getScheduler().queue(audioTrack);
             }, audioPlaylist -> {
                 if (audioPlaylist.isSearchResult()) {
                     AudioTrack first = audioPlaylist.getTracks().get(0);
                     manager.getScheduler().queue(first);
                     ctx.replyText("Трек **" + first.getInfo().title + "** добавлен в очередь.")
-                            .queue();
+                            ;
                 } else {
                     audioPlaylist.getTracks().forEach(t -> {
                         if (manager.getScheduler().getQueue().size() + 1 > 200) {
                             ctx.replyText("Размер очереди превышен. Пожалуйста, не более 200 треков.")
-                                    .queue();
+                                    ;
                             return;
                         }
                         manager.getScheduler().queue(t);
                     });
                 ctx.replyText("Плейлист **" + audioPlaylist.getName() + "** с "
                                 + audioPlaylist.getTracks().size() + " треками добавлен в очередь.")
-                        .queue();
+                        ;
                 }
-            }, () -> ctx.replyText("По запросу " + query + " ничего не найдено.").queue(),
+            }, () -> ctx.replyText("По запросу " + query + " ничего не найдено."),
             error -> {
                 error.printStackTrace();
-                ctx.replyText("Ошибка воспроизведения.").queue();
+                ctx.replyText("Ошибка воспроизведения.");
             })
         );
     }

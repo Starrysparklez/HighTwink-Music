@@ -7,7 +7,6 @@ import net.hightwink.musicbot.classes.SlashCommandExecutor;
 import net.hightwink.musicbot.classes.audio.AudioManager;
 import net.hightwink.musicbot.classes.audio.MusicPlayerManager;
 import net.hightwink.musicbot.classes.utils.VoteManager;
-import net.hightwink.musicbot.exceptions.NonImportantException;
 
 public class Shuffle extends SlashCommandExecutor {
     public Shuffle() {
@@ -24,12 +23,12 @@ public class Shuffle extends SlashCommandExecutor {
         }
         VoteManager voteManager = new VoteManager(ctx);
         voteManager.call("Голосование за перемешивание очереди", c -> shufflePlayback(ctx),
-                c -> ctx.replyText("Запрос на перемешивание очереди отменен.").queue());
+                c -> ctx.replyText("Запрос на перемешивание очереди отменен."));
     }
 
     private void shufflePlayback(Context ctx) {
         MusicPlayerManager manager = AudioManager.get(ctx.getGuild());
         manager.getScheduler().shuffleQueue();
-        ctx.replyText(":twisted_rightwards_arrows: :ok_hand:").queue();
+        ctx.replyText(":twisted_rightwards_arrows: :ok_hand:");
     }
 }

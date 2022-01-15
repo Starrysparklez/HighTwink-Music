@@ -26,7 +26,7 @@ public class Skip extends SlashCommandExecutor {
         }
         VoteManager voteManager = new VoteManager(ctx);
         voteManager.call("Голосование за пропуск трека", c -> skipTrack(ctx),
-                c -> ctx.replyText("Запрос на пропуск трека не выполнен.").queue());
+                c -> ctx.replyText("Запрос на пропуск трека не выполнен."));
     }
 
     private void skipTrack(Context ctx) {
@@ -42,9 +42,9 @@ public class Skip extends SlashCommandExecutor {
             if (vs != null && vs.getChannel() != null)
                 ctx.getGuild().getAudioManager().closeAudioConnection();
 
-            ctx.replyText("Воспроизведение окончено, т.к. достигнут конец очереди.").queue();
+            ctx.replyText("Воспроизведение окончено, т.к. достигнут конец очереди.");
             return;
         }
-        ctx.replyText(String.format("Пропускаем... Следующий трек: **%s**", track.getInfo().title)).queue();
+        ctx.replyText(String.format("Пропускаем... Следующий трек: **%s**", track.getInfo().title));
     }
 }

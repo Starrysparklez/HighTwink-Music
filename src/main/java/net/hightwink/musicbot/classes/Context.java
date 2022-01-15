@@ -33,14 +33,29 @@ public class Context {
         return this.event.getGuild();
     }
     @Nonnull
-    public WebhookMessageAction<Message> replyText(String content) {
-        return this.hook.sendMessage(content
+    public Message replyText(String content) {
+        Message m = this.hook.sendMessage(content
                 .replace("@here", "@\u200bhere")
-                .replace("@everyone", "@\u200beveryone"));
+                .replace("@everyone", "@\u200beveryone")).complete();
+
+        new Thread(() -> {
+            try { Thread.sleep((int) config.get("bot.messageDeleteSeconds") * 1000); }
+            catch (InterruptedException e) { e.printStackTrace(); }
+            m.delete().queue();
+        }).start();
+
+        return m;
     }
     @Nonnull
-    public WebhookMessageAction<Message> replyEmbeds(MessageEmbed... embeds) {
-        return this.hook.sendMessageEmbeds(Arrays.asList(embeds));
+    public Message replyEmbeds(MessageEmbed... embeds) {
+        Message m = this.hook.sendMessageEmbeds(Arrays.asList(embeds)).complete();
+
+        new Thread(() -> {
+            try { Thread.sleep((int) config.get("bot.embedMessageDeleteSeconds") * 1000); }
+            catch (InterruptedException e) { e.printStackTrace(); }
+            m.delete().queue();
+        }).start();
+        return m;
     }
     @Nonnull
     public SlashCommandEvent getEvent() {

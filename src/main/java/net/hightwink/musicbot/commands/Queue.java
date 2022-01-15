@@ -26,7 +26,7 @@ public class Queue extends SlashCommandExecutor {
 
         if (player.getPlayingTrack() == null) {
             ctx.replyText("Хм.. По-моему, музыка сейчас не проигрывается.\n"
-                    + "Может быть, для начала начнете воспроизведение, используя команду `/play`?").queue();
+                    + "Может быть, для начала начнете воспроизведение, используя команду `/play`?");
             return;
         }
 
@@ -49,6 +49,6 @@ public class Queue extends SlashCommandExecutor {
                 .addField("Очередь:", queueResponse.toString(), false)
                 .setColor(0xFFFFFF);
 
-        ctx.replyEmbeds(builder.build()).queue();
+        ctx.replyEmbeds(builder.build());
     }
 }

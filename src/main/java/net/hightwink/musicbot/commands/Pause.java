@@ -2,6 +2,7 @@ package net.hightwink.musicbot.commands;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.hightwink.musicbot.classes.Context;
 import net.hightwink.musicbot.classes.SlashCommandExecutor;
@@ -24,13 +25,17 @@ public class Pause extends SlashCommandExecutor {
         }
         VoteManager voteManager = new VoteManager(ctx);
         voteManager.call("Голосование за паузу", c -> pausePlayback(ctx),
-                c -> ctx.replyText("Запрос на паузу отменен.").queue());
+                c -> ctx.replyText("Запрос на паузу отменен."));
     }
 
     private void pausePlayback(Context ctx) {
         MusicPlayerManager manager = AudioManager.get(ctx.getGuild());
         AudioPlayer player = manager.getPlayer();
-        player.setPaused(!player.isPaused());
-        ctx.replyText(":ok_hand:").queue();
+        if (player.isPaused()) {
+            ctx.replyText("Воспроизведение и так на паузе.");
+            return;
+        }
+        player.setPaused(true);
+        ctx.replyText("Воспроизведение приостановлено!");
     }
 }

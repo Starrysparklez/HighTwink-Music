@@ -22,7 +22,7 @@ public class Stop extends SlashCommandExecutor {
         }
         VoteManager voteManager = new VoteManager(ctx);
         voteManager.call("Голосование за остановку воспроизведения", c -> stopPlayback(ctx),
-                c -> ctx.replyText("Запрос на остановку воспроизведения не выполнен.").queue());
+                c -> ctx.replyText("Запрос на остановку воспроизведения не выполнен."));
     }
 
     private void stopPlayback(Context ctx) {
@@ -30,6 +30,6 @@ public class Stop extends SlashCommandExecutor {
         manager.getScheduler().getQueue().clear();
         manager.getPlayer().destroy();
         ctx.getGuild().getAudioManager().closeAudioConnection();
-        ctx.replyText(":ok_hand: остановлено").queue();
+        ctx.replyText(":ok_hand: остановлено");
     }
 }
