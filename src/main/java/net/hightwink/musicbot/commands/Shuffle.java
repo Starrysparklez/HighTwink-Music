@@ -17,14 +17,14 @@ public class Shuffle extends SlashCommandExecutor {
     }
 
     @Override
-    public void execute(Context ctx) throws NonImportantException {
+    public void execute(Context ctx) {
         if (ctx.getAuthor().getPermissions().contains(Permission.ADMINISTRATOR)) {
             shufflePlayback(ctx);
             return;
         }
         VoteManager voteManager = new VoteManager(ctx);
-        voteManager.call("Голосование за паузу", c -> shufflePlayback(ctx),
-                c -> ctx.replyText("Запрос на паузу отменен.").queue());
+        voteManager.call("Голосование за перемешивание очереди", c -> shufflePlayback(ctx),
+                c -> ctx.replyText("Запрос на перемешивание очереди отменен.").queue());
     }
 
     private void shufflePlayback(Context ctx) {
