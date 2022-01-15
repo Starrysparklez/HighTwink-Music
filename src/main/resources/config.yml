@@ -1,3 +1,12 @@
+# токен бота
 bot.token: ""
+
+# что отображать в статусе
 bot.activity: ""
+
+# id stuff-сервера
 bot.stuffServerId: ""
+
+# если включить, то бот зарегистрирует все команды на 'bot.stuffServerId' сервере
+# в проде не рекомендую это включать
+bot.developmentEnvironment: false
