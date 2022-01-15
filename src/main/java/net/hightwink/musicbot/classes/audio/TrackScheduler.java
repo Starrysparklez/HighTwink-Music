@@ -12,9 +12,8 @@ import java.util.Collections;
 
 public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
-    private ArrayList<AudioTrack> queue;
+    private final ArrayList<AudioTrack> queue;
     private final Guild guild;
-    public boolean repeatMode = false;
 
     public TrackScheduler(AudioPlayer player, Guild guild) {
         this.player = player;
@@ -23,7 +22,6 @@ public class TrackScheduler extends AudioEventAdapter {
     }
     public void queue(AudioTrack track) {
         if (!player.startTrack(track, true)) {
-            //queue.offer(track);
             queue.add(track);
         }
     }
@@ -31,10 +29,11 @@ public class TrackScheduler extends AudioEventAdapter {
         queue.clear();
     }
     public AudioTrack nextTrack() {
-        //AudioTrack track = queue.poll();
-        AudioTrack track = queue.get(0);
-        queue.remove(0);
-        player.startTrack(track, false);
+        AudioTrack track = queue.size() > 0 ? queue.get(0) : null;
+        if (track != null) {
+            queue.remove(0);
+            player.startTrack(track, false);
+        }
         return track;
     }
     public ArrayList<AudioTrack> getQueue() {
@@ -42,10 +41,6 @@ public class TrackScheduler extends AudioEventAdapter {
     }
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason reason) {
-        if (repeatMode && reason == AudioTrackEndReason.FINISHED) {
-            player.startTrack(track.makeClone(), false);
-            return;
-        }
         if (reason.mayStartNext) {
             if (nextTrack() == null) {
                 player.destroy();
@@ -55,7 +50,6 @@ public class TrackScheduler extends AudioEventAdapter {
             }
         }
     }
-
     public void shuffleQueue() {
         Collections.shuffle(queue);
     }
