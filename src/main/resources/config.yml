@@ -16,3 +16,9 @@ bot.developmentEnvironment: false
 bot.allowedVoices:
   - "764589464982388776"
   - "932025313637064724"
+
+# через заданное количество секунд бот будет удалять свои сообщения
+bot.messageDeleteSeconds: 5
+
+# а через количество секунд, указанное ниже, будут удаляться сообщения с вложениями (Embed)
+bot.embedMessageDeleteSeconds: 15
