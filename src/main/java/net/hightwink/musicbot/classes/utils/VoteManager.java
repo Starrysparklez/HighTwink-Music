@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.GuildVoiceState;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -44,8 +46,8 @@ public class VoteManager {
         String yesButtonId = "yesButton" + UUID.randomUUID();
         String noButtonId = "yesButton" + UUID.randomUUID();
 
-        List<Member> votedYes = new ArrayList<>();
-        List<Member> votedNo  = new ArrayList<>();
+        List<String> votedYes = new ArrayList<>();
+        List<String> votedNo  = new ArrayList<>();
         List<Member> voiceMembers = ctx.getGuild().getSelfMember().getVoiceState().getChannel().getMembers()
                 .stream()
                 .filter(member -> member.getIdLong() != ctx.getEvent().getJDA().getSelfUser().getIdLong())
@@ -70,13 +72,24 @@ public class VoteManager {
                     assert customId != null;
 
                     Member member = event.getMember();
+                    assert member != null;
 
                     if (customId.equals(yesButtonId)) {
-                        votedYes.add(member);
-                        votedNo.remove(member);
+                        if (votedYes.contains(member.getId())) {
+                            event.getInteraction().deferReply(true)
+                                    .setContent("Вы уже проголосовали ЗА.").queue();
+                            return;
+                        }
+                        votedYes.add(member.getId());
+                        votedNo.remove(member.getId());
                     } else {
-                        votedNo.add(member);
-                        votedYes.remove(member);
+                        if (votedNo.contains(member.getId())) {
+                            event.getInteraction().deferReply(true)
+                                    .setContent("Вы уже проголосовали ПРОТИВ.").queue();
+                            return;
+                        }
+                        votedNo.add(member.getId());
+                        votedYes.remove(member.getId());
                     }
 
                     if (votedNo.size() >= voiceMembers.size()) {
@@ -102,11 +115,16 @@ public class VoteManager {
                     jda.addEventListener(eventListener);
                     try { Thread.sleep(10 * 1000); } catch (InterruptedException e) { e.printStackTrace(); }
                     jda.removeEventListener(eventListener);
-                } else {
+
+                    if (!requestSatisfied.get()) {
+                        if (votedYes.size() >= voiceMembers.size())
+                            callbackAccept.accept(null);
+                        else
+                            callbackDecline.accept(null);
+                    }
+                    hook.deleteOriginal().queue();
+                } else
                     callbackAccept.accept(null);
-                    return;
-                }
-                if (!requestSatisfied.get()) callbackDecline.accept(null);
             }).start();
         });
     }
